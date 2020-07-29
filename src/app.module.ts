@@ -15,11 +15,11 @@ import { Env } from './common/env';
       username: Env.DB_USERNAME,
       password: Env.DB_PASSWORD,
       database: Env.DB_DATABASE,
-      entities: [User],
       synchronize: true,
+      entities: [User],
     }),
     GraphQLModule.forRoot({
-      autoSchemaFile: './src/schema.gql',
+      autoSchemaFile: './schema.gql',
       playground: true,
       debug: true
     }),
