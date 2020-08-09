@@ -2,6 +2,47 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type RegisterOutput {
+  token: String!
+}
+
+type ProfileOutput {
+  id: Float!
+  username: String!
+}
+
+type LoginOutput {
+  token: String!
+}
+
+type GetChatOutput {
+  id: Float!
+  name: String!
+}
+
 type Query {
-  profile: String!
+  profile: ProfileOutput!
+  getChat: [GetChatOutput!]!
+}
+
+type Mutation {
+  register(user: RegisterInput!): RegisterOutput!
+  login(user: LoginInput!): LoginOutput!
+  createChat(chat: CreateChatInput!): GetChatOutput!
+}
+
+input RegisterInput {
+  fullName: String!
+  email: String!
+  username: String!
+  password: String!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+input CreateChatInput {
+  with: [Int!]!
 }
