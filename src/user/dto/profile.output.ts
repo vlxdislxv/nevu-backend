@@ -7,4 +7,7 @@ export class ProfileOutput {
 
   @Field()
   username: string;
+
+  @Field()
+  fullName: string;
 }

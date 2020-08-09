@@ -2,17 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type RegisterOutput {
-  token: String!
-}
-
 type ProfileOutput {
   id: Float!
   username: String!
-}
-
-type LoginOutput {
-  token: String!
+  fullName: String!
 }
 
 type GetChatOutput {
@@ -20,15 +13,37 @@ type GetChatOutput {
   name: String!
 }
 
+type GetMessageOutput {
+  id: Float!
+  text: String!
+  from: ProfileOutput!
+  chat: GetChatOutput!
+}
+
+type RegisterOutput {
+  token: String!
+}
+
+type LoginOutput {
+  token: String!
+}
+
 type Query {
+  getMessage(chatId: Float!): [GetMessageOutput!]!
   profile: ProfileOutput!
   getChat: [GetChatOutput!]!
 }
 
 type Mutation {
+  addMessage(message: CreateMessageInput!): GetMessageOutput!
   register(user: RegisterInput!): RegisterOutput!
   login(user: LoginInput!): LoginOutput!
   createChat(chat: CreateChatInput!): GetChatOutput!
+}
+
+input CreateMessageInput {
+  text: String!
+  chatId: Float!
 }
 
 input RegisterInput {

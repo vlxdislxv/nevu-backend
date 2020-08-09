@@ -8,7 +8,7 @@ import {
   Column,
 } from 'typeorm';
 import { User } from '../../user/models/user.entity';
-import { Message } from './message.entity';
+import { Message } from '../../message/models/message.entity';
 
 @Entity()
 export class Chat {

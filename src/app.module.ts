@@ -1,15 +1,17 @@
+import { MessageModule } from './message/message.module';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/models/user.entity';
 import { Env } from './common/env';
-import { Message } from './chat/models/message.entity';
+import { Message } from './message/models/message.entity';
 import { Chat } from './chat/models/chat.entity';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
+    MessageModule,
     ChatModule,
     UserModule,
     TypeOrmModule.forRoot({
@@ -25,7 +27,7 @@ import { ChatModule } from './chat/chat.module';
     GraphQLModule.forRoot({
       autoSchemaFile: './src/schema.gql',
       playground: true,
-      debug: true
+      debug: true,
     }),
   ],
 })
