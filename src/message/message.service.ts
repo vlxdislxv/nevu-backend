@@ -32,7 +32,7 @@ export class MessageService {
       .orderBy('message.id', 'DESC')
       .getMany();
 
-    return messages;
+    return messages.sort((a, b) => a.id - b.id);
   }
 
   async createMessage(from: User, chat: Chat, text: string): Promise<Message> {
