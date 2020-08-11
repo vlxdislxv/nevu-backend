@@ -17,5 +17,6 @@ import { Repository } from 'typeorm';
     TypeOrmModule.forFeature([User]),
   ],
   providers: [UserService, UserResolver, JwtStrategy, Repository],
+  exports: [UserService, JwtModule]
 })
 export class UserModule {}

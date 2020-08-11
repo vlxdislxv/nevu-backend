@@ -8,6 +8,8 @@ import { HashHelper } from '../common/helpers/hash.helper';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginInput } from './dto/login.input';
 import { LoginOutput } from './dto/login.output';
+import { UserFindInput } from './dto/user-find.input';
+import { ProfileOutput } from './dto/profile.output';
 
 @Injectable()
 export class UserService {
@@ -35,5 +37,21 @@ export class UserService {
     } catch {
       throw new UnauthorizedException();
     }
+  }
+
+  public async find(input: UserFindInput, currUser: User): Promise<ProfileOutput[]> {
+    const users = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.fullName LIKE :fullName and id != :uid', {
+        fullName: `%${input.search}%`,
+        uid: currUser.id,
+      })
+      .getMany();
+
+    return users;
+  }
+
+  public async findById(id: number): Promise<User> {
+    return this.usersRepository.findOne({ id });
   }
 }

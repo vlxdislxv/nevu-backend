@@ -31,7 +31,12 @@ type LoginOutput {
 type Query {
   getMessage(chatId: Float!): [GetMessageOutput!]!
   profile: ProfileOutput!
+  findUser(user: UserFindInput!): [ProfileOutput!]!
   getChat: [GetChatOutput!]!
+}
+
+input UserFindInput {
+  search: String!
 }
 
 type Mutation {

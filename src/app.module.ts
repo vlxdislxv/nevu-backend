@@ -8,6 +8,7 @@ import { Env } from './common/env';
 import { Message } from './message/models/message.entity';
 import { Chat } from './chat/models/chat.entity';
 import { ChatModule } from './chat/chat.module';
+import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
@@ -30,5 +31,6 @@ import { ChatModule } from './chat/chat.module';
       debug: true,
     }),
   ],
+  providers: [AppGateway]
 })
 export class AppModule {}

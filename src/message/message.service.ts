@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Chat } from '../chat/models/chat.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { GetMessageOutput } from './dto/get-message.output';
+import { AppGateway } from '../app.gateway';
 
 @Injectable()
 export class MessageService {
@@ -48,8 +49,8 @@ export class MessageService {
   async sendMessage(from: User, input: CreateMessageInput): Promise<GetMessageOutput> {
     const chat = await this.chatRepository
       .createQueryBuilder('chat')
-      .leftJoin('chat.users', 'user')
-      .where('user.id = :uid and chat.id = :chatId', { uid: from.id, chatId: input.chatId })
+      .leftJoinAndSelect('chat.users', 'user')
+      .where('chat.id = :chatId', { chatId: input.chatId })
       .getOne();
 
     if (!chat) {
@@ -58,6 +59,25 @@ export class MessageService {
 
     const message = await this.createMessage(from, chat, input.text);
 
-    return {...message};
+    const resp: GetMessageOutput = {
+      id: message.id,
+      from: {
+        id: message.from.id,
+        username: message.from.username,
+        fullName: message.from.fullName
+      },
+      chat: {
+        id: message.chat.id,
+        name: message.chat.name
+      },
+      text: message.text
+    };
+
+    chat.users.map(user => {
+      if (user.id !== from.id)
+        AppGateway.staticServer.to(`${user.id}`).emit('inc_msg', { message: resp });
+    });
+
+    return resp;
   }
 }
