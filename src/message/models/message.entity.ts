@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   ManyToOne,
-  RelationId,
 } from 'typeorm';
 import { User } from '../../user/models/user.entity';
 import { Chat } from '../../chat/models/chat.entity';

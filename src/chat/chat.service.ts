@@ -59,4 +59,8 @@ export class ChatService {
 
     return this.create(users);
   }
+
+  public chatHasUser(user: User, chat: Chat): boolean {
+    return chat.users.find(cUser => cUser.id === user.id) && true;
+  }
 }

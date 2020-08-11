@@ -9,17 +9,18 @@ import { Repository } from 'typeorm';
 import { Chat } from '../chat/models/chat.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { GetMessageOutput } from './dto/get-message.output';
-import { AppGateway } from '../app.gateway';
+import { SocketService } from '../socket/socket.service';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable()
 export class MessageService {
   public constructor(
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(Chat)
     private readonly chatRepository: Repository<Chat>,
+    private readonly socketService: SocketService,
+    private readonly chatService: ChatService
   ) {}
 
   async getMessages(uid: number, chatId: number): Promise<GetMessageOutput[]> {
@@ -46,14 +47,17 @@ export class MessageService {
     return this.messageRepository.save(message);
   }
 
-  async sendMessage(from: User, input: CreateMessageInput): Promise<GetMessageOutput> {
+  async sendMessage(
+    from: User,
+    input: CreateMessageInput,
+  ): Promise<GetMessageOutput> {
     const chat = await this.chatRepository
       .createQueryBuilder('chat')
       .leftJoinAndSelect('chat.users', 'user')
       .where('chat.id = :chatId', { chatId: input.chatId })
       .getOne();
 
-    if (!chat) {
+    if (!chat || !this.chatService.chatHasUser(from, chat)) {
       throw new BadRequestException('chat not found');
     }
 
@@ -64,18 +68,20 @@ export class MessageService {
       from: {
         id: message.from.id,
         username: message.from.username,
-        fullName: message.from.fullName
+        fullName: message.from.fullName,
       },
       chat: {
         id: message.chat.id,
-        name: message.chat.name
+        name: message.chat.name,
       },
-      text: message.text
+      text: message.text,
     };
 
     chat.users.map(user => {
       if (user.id !== from.id)
-        AppGateway.staticServer.to(`${user.id}`).emit('inc_msg', { message: resp });
+        this.socketService.server
+          .to(`${user.id}`)
+          .emit('inc_msg', { message: resp });
     });
 
     return resp;

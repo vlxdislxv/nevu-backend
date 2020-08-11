@@ -30,9 +30,9 @@ type LoginOutput {
 
 type Query {
   getMessage(chatId: Float!): [GetMessageOutput!]!
+  getChat: [GetChatOutput!]!
   profile: ProfileOutput!
   findUser(user: UserFindInput!): [ProfileOutput!]!
-  getChat: [GetChatOutput!]!
 }
 
 input UserFindInput {
@@ -41,14 +41,18 @@ input UserFindInput {
 
 type Mutation {
   addMessage(message: CreateMessageInput!): GetMessageOutput!
+  createChat(chat: CreateChatInput!): GetChatOutput!
   register(user: RegisterInput!): RegisterOutput!
   login(user: LoginInput!): LoginOutput!
-  createChat(chat: CreateChatInput!): GetChatOutput!
 }
 
 input CreateMessageInput {
   text: String!
   chatId: Float!
+}
+
+input CreateChatInput {
+  with: [Int!]!
 }
 
 input RegisterInput {
@@ -61,8 +65,4 @@ input RegisterInput {
 input LoginInput {
   username: String!
   password: String!
-}
-
-input CreateChatInput {
-  with: [Int!]!
 }

@@ -3,10 +3,9 @@ import { Module } from '@nestjs/common';
 import { UserResolver } from './user.resolver';
 import { JwtModule } from '@nestjs/jwt';
 import { Env } from '../common/env';
-import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './models/user.entity';
-import { Repository } from 'typeorm';
+import { JwtStrategy } from '../common/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -16,7 +15,7 @@ import { Repository } from 'typeorm';
     }),
     TypeOrmModule.forFeature([User]),
   ],
-  providers: [UserService, UserResolver, JwtStrategy, Repository],
-  exports: [UserService, JwtModule]
+  providers: [UserService, UserResolver, JwtStrategy],
+  exports: [UserService, JwtModule, JwtStrategy]
 })
 export class UserModule {}

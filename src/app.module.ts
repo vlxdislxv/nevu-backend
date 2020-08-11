@@ -9,12 +9,14 @@ import { Message } from './message/models/message.entity';
 import { Chat } from './chat/models/chat.entity';
 import { ChatModule } from './chat/chat.module';
 import { AppGateway } from './app.gateway';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
     MessageModule,
     ChatModule,
     UserModule,
+    SocketModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: Env.DB_HOST,
@@ -31,6 +33,6 @@ import { AppGateway } from './app.gateway';
       debug: true,
     }),
   ],
-  providers: [AppGateway]
+  providers: [AppGateway],
 })
 export class AppModule {}

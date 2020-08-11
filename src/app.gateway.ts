@@ -8,6 +8,7 @@ import { Socket, Server } from 'socket.io';
 import { SocketAuthGuard } from './common/guards/socket-auth.guard';
 import { UseGuards, OnModuleInit } from '@nestjs/common';
 import { User } from './user/models/user.entity';
+import { SocketService } from './socket/socket.service';
 
 interface AuthWSResponse {
   success: boolean;
@@ -20,13 +21,13 @@ interface AuthWSRequest {
 
 @WebSocketGateway()
 export class AppGateway implements OnModuleInit {
-  @WebSocketServer()
-  server: Server;
+  constructor(private socketService: SocketService) {}
 
-  static staticServer: Server;
+  @WebSocketServer()
+  public server: Server;
 
   onModuleInit(): void {
-    AppGateway.staticServer = this.server;
+    this.socketService.server = this.server;
   }
 
   @SubscribeMessage('auth')
