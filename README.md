@@ -4,6 +4,9 @@
 <p align="center">
   <a href="https://graphql.org/" target="blank"><img src="https://graphql.org/img/logo.svg" width="320" alt="Nest Logo" /></a>
 </p>
+<p align="center">
+  <a href="https://graphql.org/" target="blank"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="320" alt="Nest Logo" /></a>
+</p>
 ## Installation
 
 ```bash
