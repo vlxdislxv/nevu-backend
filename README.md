@@ -25,3 +25,6 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## Config
+# src/common/env.ts
