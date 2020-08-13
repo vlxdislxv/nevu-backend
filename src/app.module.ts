@@ -31,6 +31,7 @@ import { SocketModule } from './socket/socket.module';
       autoSchemaFile: './src/schema.gql',
       playground: true,
       debug: true,
+      context: ({ request }) => ({ request })
     }),
   ],
   providers: [AppGateway],
