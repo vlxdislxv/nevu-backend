@@ -6,6 +6,7 @@ import { Chat } from './models/chat.entity';
 import { User } from '../user/models/user.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { unique } from '../common/helpers/funcs';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable()
 export class ChatService {
@@ -13,18 +14,34 @@ export class ChatService {
     @InjectRepository(Chat)
     private readonly chatRepository: Repository<Chat>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly socketService: SocketService,
   ) {}
 
   public async getChats(uid: number): Promise<GetChatOutput[]> {
-    const chats = await this.chatRepository
-      .createQueryBuilder('chat')
+    const server = this.socketService.server;
+
+    const chats = await this.chatRepository.createQueryBuilder('chat')
       .select(['chat.id', 'chat.name'])
-      .leftJoin('chat.users', "user")
-      .where("user.id = :uid", { uid })
+      .leftJoin('chat.users', 'user')
+      .where('user.id = :uid', { uid })
+      .limit(15)
       .getMany();
 
-    return chats;
+    const chatIds = chats.map(chat => chat.id);
+
+    const chatsWithMembers = await this.chatRepository
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.users', 'user')
+      .where('user.id != :uid and chat.id IN (:...chatIds)', { uid, chatIds })
+      .getMany();
+
+    chatsWithMembers.map(chat => chat.users.map(user => {
+      const room = server.sockets.adapter.rooms[user.id.toString()];
+      chat.online = room !== undefined;
+    }));
+
+    return chatsWithMembers;
   }
 
   public async create(users: User[]): Promise<Chat> {

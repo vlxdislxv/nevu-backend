@@ -7,4 +7,7 @@ export class GetChatOutput {
 
   @Field()
   name: string;
+
+  @Field()
+  online?: boolean;
 }

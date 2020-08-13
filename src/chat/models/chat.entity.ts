@@ -25,4 +25,6 @@ export class Chat {
 
   @Column()
   name: string;
+
+  online?: boolean;
 }
