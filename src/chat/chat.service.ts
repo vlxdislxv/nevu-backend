@@ -28,7 +28,7 @@ export class ChatService {
       .limit(15)
       .getMany();
 
-    const chatIds = chats.map(chat => chat.id);
+    const chatIds = [-1, ...chats.map(chat => chat.id)];
 
     const chatsWithMembers = await this.chatRepository
       .createQueryBuilder('chat')
