@@ -9,11 +9,11 @@ import { GetMessageOutput } from "./dto/get-message.output";
 import { CreateMessageInput } from "./dto/create-message.input";
 
 @Resolver(() => Message)
+@UseGuards(AuthGuard)
 export class MessageResolver {
   constructor(private messageService: MessageService) {}
 
   @Query(() => [GetMessageOutput])
-  @UseGuards(AuthGuard)
   async getMessage(
     @CurrentUser() user: User,
     @Args('chatId') chatId: number,
@@ -22,7 +22,6 @@ export class MessageResolver {
   }
 
   @Mutation(() => GetMessageOutput)
-  @UseGuards(AuthGuard)
   async addMessage(
     @CurrentUser() user: User,
     @Args('message') createChatInput: CreateMessageInput,
