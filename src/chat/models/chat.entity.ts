@@ -16,7 +16,7 @@ export class Chat {
   id: number;
 
   @ManyToMany(() => User)
-  @JoinTable()
+  @JoinTable({ name: 'user_chats_chat' })
   users: User[];
 
   @OneToMany(() => Message, message => message.chat)

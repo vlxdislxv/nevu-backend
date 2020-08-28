@@ -7,7 +7,7 @@ export class User {
   id: number;
 
   @ManyToMany(() => Chat)
-  @JoinTable()
+  @JoinTable({ name: 'user_chats_chat' })
   chats: Chat[];
 
   @Column({ unique: true })
