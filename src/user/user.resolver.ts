@@ -23,7 +23,7 @@ export class UserResolver {
 
   @Query(() => [ProfileOutput])
   @UseGuards(AuthGuard)
-  async findUser(
+  public findUser(
     @CurrentUser() user: User,
     @Args('user') userFindInput: UserFindInput,
   ): Promise<ProfileOutput[]> {
@@ -31,14 +31,14 @@ export class UserResolver {
   }
 
   @Mutation(() => RegisterOutput)
-  async register(
+  public register(
     @Args('user') regData: RegisterInput,
   ): Promise<RegisterOutput> {
     return this.userService.register(regData);
   }
 
   @Mutation(() => LoginOutput)
-  async login(@Args('user') loginData: LoginInput): Promise<LoginOutput> {
+  public login(@Args('user') loginData: LoginInput): Promise<LoginOutput> {
     return this.userService.login(loginData);
   }
 }

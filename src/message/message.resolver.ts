@@ -14,7 +14,7 @@ export class MessageResolver {
   constructor(private messageService: MessageService) {}
 
   @Query(() => [GetMessageOutput])
-  async getMessage(
+  public getMessage(
     @CurrentUser() user: User,
     @Args('chatId') chatId: number,
   ): Promise<GetMessageOutput[]> {
@@ -22,7 +22,7 @@ export class MessageResolver {
   }
 
   @Mutation(() => GetMessageOutput)
-  async addMessage(
+  public addMessage(
     @CurrentUser() user: User,
     @Args('message') createChatInput: CreateMessageInput,
   ): Promise<GetMessageOutput> {

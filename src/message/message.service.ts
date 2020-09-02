@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/models/user.entity';
 import { Message } from './models/message.entity';
@@ -20,10 +17,13 @@ export class MessageService {
     @InjectRepository(Chat)
     private readonly chatRepository: Repository<Chat>,
     private readonly socketService: SocketService,
-    private readonly chatService: ChatService
+    private readonly chatService: ChatService,
   ) {}
 
-  async getMessages(uid: number, chatId: number): Promise<GetMessageOutput[]> {
+  public async getMessages(
+    uid: number,
+    chatId: number,
+  ): Promise<GetMessageOutput[]> {
     const messages = await this.messageRepository
       .createQueryBuilder('message')
       .leftJoin('message.chat', 'chat')
@@ -37,7 +37,11 @@ export class MessageService {
     return messages.sort((a, b) => a.id - b.id);
   }
 
-  async createMessage(from: User, chat: Chat, text: string): Promise<Message> {
+  private createMessage(
+    from: User,
+    chat: Chat,
+    text: string,
+  ): Promise<Message> {
     const message = new Message();
 
     message.text = text;
@@ -47,7 +51,7 @@ export class MessageService {
     return this.messageRepository.save(message);
   }
 
-  async sendMessage(
+  public async sendMessage(
     from: User,
     input: CreateMessageInput,
   ): Promise<GetMessageOutput> {
@@ -77,13 +81,19 @@ export class MessageService {
       text: message.text,
     };
 
-    chat.users.map(user => {
-      if (user.id !== from.id)
-        this.socketService.server
-          .to(`${user.id}`)
-          .emit('inc_msg', { message: resp });
-    });
+    this.pushMessage(chat.users, from, resp);
 
     return resp;
+  }
+
+  private pushMessage(
+    users: User[],
+    from: User,
+    message: GetMessageOutput,
+  ): void {
+    users.map((user) => {
+      if (user.id !== from.id)
+        this.socketService.server.to(`${user.id}`).emit('inc_msg', { message });
+    });
   }
 }

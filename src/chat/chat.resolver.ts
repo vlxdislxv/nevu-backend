@@ -14,13 +14,13 @@ export class ChatResolver {
 
   @Query(() => [GetChatOutput])
   @UseGuards(AuthGuard)
-  async getChat(@CurrentUser() user: User): Promise<GetChatOutput[]> {
+  public getChat(@CurrentUser() user: User): Promise<GetChatOutput[]> {
     return this.chatService.getChats(user.id);
   }
 
   @Mutation(() => GetChatOutput)
   @UseGuards(AuthGuard)
-  async createChat(
+  public createChat(
     @CurrentUser() user: User,
     @Args('chat') createChatInput: CreateChatInput,
   ): Promise<GetChatOutput> {

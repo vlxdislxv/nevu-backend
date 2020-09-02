@@ -44,7 +44,7 @@ export class ChatService {
     return chatsWithMembers;
   }
 
-  public async create(users: User[]): Promise<Chat> {
+  private create(users: User[]): Promise<Chat> {
     let chatName = '';
     users.map(user => {chatName += `${user.fullName},`});
     chatName = chatName.substring(0, chatName.length - 1);
