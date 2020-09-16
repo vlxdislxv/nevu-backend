@@ -19,8 +19,6 @@ export class ChatService {
   ) {}
 
   public async getChats(uid: number): Promise<GetChatOutput[]> {
-    const server = this.socketService.server;
-
     const chats = await this.chatRepository.createQueryBuilder('chat')
       .select(['chat.id', 'chat.name'])
       .leftJoin('chat.users', 'user')
@@ -36,25 +34,14 @@ export class ChatService {
       .where('user.id != :uid and chat.id IN (:...chatIds)', { uid, chatIds })
       .getMany();
 
-    chatsWithMembers.map(chat => chat.users.map(user => {
-      const room = server.sockets.adapter.rooms[user.id.toString()];
-      chat.online = room !== undefined;
-    }));
-
-    return chatsWithMembers;
-  }
-
-  private create(users: User[]): Promise<Chat> {
-    let chatName = '';
-    users.map(user => {chatName += `${user.fullName},`});
-    chatName = chatName.substring(0, chatName.length - 1);
-
-    const chat = new Chat();
-    chat.messages = [];
-    chat.users = users;
-    chat.name = chatName;
-
-    return this.chatRepository.save(chat);
+    return chatsWithMembers.map(
+      (chat) =>
+        new GetChatOutput(
+          chat.id,
+          chat.name,
+          !!chat.users.find((u) => u.isOnline(this.socketService)),
+        ),
+    );
   }
 
   public async createChat(currUser: User, createChat: CreateChatInput): Promise<GetChatOutput> {
@@ -74,10 +61,23 @@ export class ChatService {
       throw new BadRequestException('with[] is invalid');
     }
 
-    return this.create(users);
+    const chat = new Chat(users, this.generateChatName(users));
+
+    return chat.save(this.chatRepository);
   }
 
-  public chatHasUser(user: User, chat: Chat): boolean {
-    return chat.users.find(cUser => cUser.id === user.id) && true;
+  private generateChatName(users: User[]): string {
+    let chatName = '';
+    users.map(user => {chatName += `${user.fullName},`});
+    chatName = chatName.substring(0, chatName.length - 1);
+    return chatName;
+  }
+
+  public findById(chatId: number): Promise<Chat> {
+    return this.chatRepository
+    .createQueryBuilder('chat')
+    .leftJoinAndSelect('chat.users', 'user')
+    .where('chat.id = :chatId', { chatId })
+    .getOne();
   }
 }

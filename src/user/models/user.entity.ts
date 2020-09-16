@@ -1,8 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Chat } from '../../chat/models/chat.entity';
+import { BaseEntity } from '../../common/base/base-entity';
+import { SocketService } from '../../socket/socket.service';
 
 @Entity()
-export class User {
+export class User extends BaseEntity<User> {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,14 +13,18 @@ export class User {
   chats: Chat[];
 
   @Column({ unique: true })
-  email: string;  
+  email: string;
 
   @Column({ unique: true })
   username: string;
 
   @Column()
   password: string;
-  
+
   @Column()
   fullName: string;
+
+  public isOnline(socketService: SocketService): boolean {
+    return socketService.clientAlive(this.id.toString());
+  }
 }

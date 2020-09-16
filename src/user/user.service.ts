@@ -39,19 +39,17 @@ export class UserService {
     }
   }
 
-  public async find(input: UserFindInput, currUser: User): Promise<ProfileOutput[]> {
-    const users = await this.usersRepository
+  public find(input: UserFindInput, currUser: User): Promise<ProfileOutput[]> {
+    return this.usersRepository
       .createQueryBuilder('user')
       .where('user.fullName LIKE :fullName and id != :uid', {
         fullName: `%${input.search}%`,
         uid: currUser.id,
       })
       .getMany();
-
-    return users;
   }
 
-  public async findById(id: number): Promise<User> {
+  public findById(id: number): Promise<User> {
     return this.usersRepository.findOne({ id });
   }
 }

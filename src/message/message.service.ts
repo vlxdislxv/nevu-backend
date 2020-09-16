@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/models/user.entity';
 import { Message } from './models/message.entity';
 import { Repository } from 'typeorm';
-import { Chat } from '../chat/models/chat.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { GetMessageOutput } from './dto/get-message.output';
 import { SocketService } from '../socket/socket.service';
@@ -14,8 +13,6 @@ export class MessageService {
   public constructor(
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
-    @InjectRepository(Chat)
-    private readonly chatRepository: Repository<Chat>,
     private readonly socketService: SocketService,
     private readonly chatService: ChatService,
   ) {}
@@ -37,49 +34,19 @@ export class MessageService {
     return messages.sort((a, b) => a.id - b.id);
   }
 
-  private createMessage(
-    from: User,
-    chat: Chat,
-    text: string,
-  ): Promise<Message> {
-    const message = new Message();
-
-    message.text = text;
-    message.chat = chat;
-    message.from = from;
-
-    return this.messageRepository.save(message);
-  }
-
   public async sendMessage(
     from: User,
     input: CreateMessageInput,
   ): Promise<GetMessageOutput> {
-    const chat = await this.chatRepository
-      .createQueryBuilder('chat')
-      .leftJoinAndSelect('chat.users', 'user')
-      .where('chat.id = :chatId', { chatId: input.chatId })
-      .getOne();
+    const chat = await this.chatService.findById(input.chatId);
 
-    if (!chat || !this.chatService.chatHasUser(from, chat)) {
+    if (!chat?.hasUserWithId(from.id)) {
       throw new BadRequestException('chat not found');
     }
 
-    const message = await this.createMessage(from, chat, input.text);
-
-    const resp: GetMessageOutput = {
-      id: message.id,
-      from: {
-        id: message.from.id,
-        username: message.from.username,
-        fullName: message.from.fullName,
-      },
-      chat: {
-        id: message.chat.id,
-        name: message.chat.name,
-      },
-      text: message.text,
-    };
+    const message = new Message(from, chat, input.text);
+    await message.save(this.messageRepository);
+    const resp = new GetMessageOutput(message.id, message.text, from, chat);
 
     this.pushMessage(chat.users, from, resp);
 

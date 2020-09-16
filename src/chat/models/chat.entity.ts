@@ -9,9 +9,10 @@ import {
 } from 'typeorm';
 import { User } from '../../user/models/user.entity';
 import { Message } from '../../message/models/message.entity';
+import { BaseEntity } from '../../common/base/base-entity';
 
 @Entity()
-export class Chat {
+export class Chat extends BaseEntity<Chat> {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,5 +27,14 @@ export class Chat {
   @Column()
   name: string;
 
-  online?: boolean;
+  constructor(_users: User[], _name: string) {
+    super();
+
+    this.users = _users;
+    this.name = _name;
+  }
+
+  public hasUserWithId(uid: number): boolean {
+    return this.users.find((user) => user.id === uid) && true;
+  }
 }
