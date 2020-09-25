@@ -40,7 +40,7 @@ export class MessageService {
   ): Promise<GetMessageOutput> {
     const chat = await this.chatService.findById(input.chatId);
 
-    if (!this.chatService.hasUserWithId(chat, from.id)) {
+    if (!chat || !this.chatService.hasUserWithId(chat, from.id)) {
       throw new BadRequestException('chat not found');
     }
 

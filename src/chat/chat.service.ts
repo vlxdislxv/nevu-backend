@@ -44,14 +44,10 @@ export class ChatService {
   }
 
   public async create(currUser: User, createChat: CreateChatInput): Promise<GetChatOutput> {
-    if (createChat.with.length > 5) {
-      throw new BadRequestException('with[] is too long');
-    }
-
     const ids = [...createChat.with, currUser.id].filter(unique);
 
     if (ids.length <= 1) {
-      throw new BadRequestException('with[] is too small');
+      throw new BadRequestException('with[] is invalid');
     }
 
     const users = await this.userService.findByIds(ids);
