@@ -40,12 +40,12 @@ export class MessageService {
   ): Promise<GetMessageOutput> {
     const chat = await this.chatService.findById(input.chatId);
 
-    if (!chat?.hasUserWithId(from.id)) {
+    if (!this.chatService.hasUserWithId(chat, from.id)) {
       throw new BadRequestException('chat not found');
     }
 
-    const message = new Message(from, chat, input.text);
-    await message.save(this.messageRepository);
+    const message = await this.messageRepository.save({ from, chat, text: input.text });
+
     const resp = new GetMessageOutput(message.id, message.text, from, chat);
 
     this.pushMessage(chat.users, from, resp);

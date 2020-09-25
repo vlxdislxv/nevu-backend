@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Chat } from '../../chat/models/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';
-import { SocketService } from '../../socket/socket.service';
 
 @Entity()
 export class User extends BaseEntity<User> {
@@ -23,8 +22,4 @@ export class User extends BaseEntity<User> {
 
   @Column()
   fullName: string;
-
-  public isOnline(socketService: SocketService): boolean {
-    return socketService.clientAlive(this.id.toString());
-  }
 }

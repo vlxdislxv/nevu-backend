@@ -6,6 +6,7 @@ import { Env } from '../common/env';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './models/user.entity';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
+import { SocketModule } from '../socket/socket.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { JwtStrategy } from '../common/strategies/jwt.strategy';
       signOptions: { expiresIn: Env.JWT_EXPIRES_IN },
     }),
     TypeOrmModule.forFeature([User]),
+    SocketModule,
   ],
   providers: [UserService, UserResolver, JwtStrategy],
   exports: [UserService, JwtModule, JwtStrategy]

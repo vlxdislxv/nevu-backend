@@ -7,15 +7,14 @@ import { User } from '../user/models/user.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { unique } from '../common/helpers/funcs';
 import { SocketService } from '../socket/socket.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ChatService {
   public constructor(
     @InjectRepository(Chat)
     private readonly chatRepository: Repository<Chat>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly socketService: SocketService,
+    private readonly userService: UserService,
   ) {}
 
   public async getChats(uid: number): Promise<GetChatOutput[]> {
@@ -39,12 +38,12 @@ export class ChatService {
         new GetChatOutput(
           chat.id,
           chat.name,
-          !!chat.users.find((u) => u.isOnline(this.socketService)),
+          !!chat.users.find((u) => this.userService.isOnline(u.id)),
         ),
     );
   }
 
-  public async createChat(currUser: User, createChat: CreateChatInput): Promise<GetChatOutput> {
+  public async create(currUser: User, createChat: CreateChatInput): Promise<GetChatOutput> {
     if (createChat.with.length > 5) {
       throw new BadRequestException('with[] is too long');
     }
@@ -55,15 +54,13 @@ export class ChatService {
       throw new BadRequestException('with[] is too small');
     }
 
-    const users = await this.userRepository.findByIds(ids);
+    const users = await this.userService.findByIds(ids);
 
     if (users.length !== ids.length) {
       throw new BadRequestException('with[] is invalid');
     }
 
-    const chat = new Chat(users, this.generateChatName(users));
-
-    return chat.save(this.chatRepository);
+    return this.chatRepository.save({ users, name: this.generateChatName(users)})
   }
 
   private generateChatName(users: User[]): string {
@@ -79,5 +76,9 @@ export class ChatService {
     .leftJoinAndSelect('chat.users', 'user')
     .where('chat.id = :chatId', { chatId })
     .getOne();
+  }
+
+  public hasUserWithId(chat: Chat, userId: number): boolean {
+    return chat.users.some(u => u.id === userId);
   }
 }

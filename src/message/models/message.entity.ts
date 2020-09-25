@@ -2,7 +2,6 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 't
 import { User } from '../../user/models/user.entity';
 import { Chat } from '../../chat/models/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';
-import { SocketService } from '../../socket/socket.service';
 
 @Entity()
 export class Message extends BaseEntity<Message> {
@@ -19,12 +18,4 @@ export class Message extends BaseEntity<Message> {
 
   @Column()
   text: string;
-
-  constructor(_from: User, _chat: Chat, _text: string) {
-    super();
-
-    this.from = _from;
-    this.chat = _chat;
-    this.text = _text;
-  }
 }

@@ -10,6 +10,7 @@ import { LoginInput } from './dto/login.input';
 import { LoginOutput } from './dto/login.output';
 import { UserFindInput } from './dto/user-find.input';
 import { ProfileOutput } from './dto/profile.output';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable()
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly socketService: SocketService,
   ) {}
 
   public async register(input: RegisterInput): Promise<RegisterOutput> {
@@ -51,5 +53,13 @@ export class UserService {
 
   public findById(id: number): Promise<User> {
     return this.usersRepository.findOne({ id });
+  }
+
+  public findByIds(ids: number[]): Promise<User[]> {
+    return this.usersRepository.findByIds(ids);
+  }
+
+  public isOnline(userId: number): boolean {
+    return this.socketService.clientAlive(userId.toString());
   }
 }

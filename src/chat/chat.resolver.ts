@@ -24,6 +24,6 @@ export class ChatResolver {
     @CurrentUser() user: User,
     @Args('chat') createChatInput: CreateChatInput,
   ): Promise<GetChatOutput> {
-    return this.chatService.createChat(user, createChatInput);
+    return this.chatService.create(user, createChatInput);
   }
 }

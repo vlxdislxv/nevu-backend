@@ -26,15 +26,4 @@ export class Chat extends BaseEntity<Chat> {
 
   @Column()
   name: string;
-
-  constructor(_users: User[], _name: string) {
-    super();
-
-    this.users = _users;
-    this.name = _name;
-  }
-
-  public hasUserWithId(uid: number): boolean {
-    return this.users.find((user) => user.id === uid) && true;
-  }
 }
