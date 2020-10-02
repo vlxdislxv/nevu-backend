@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { User } from '../user/models/user.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { GetMessageOutput } from './dto/get-message.output';
@@ -17,7 +17,13 @@ export class MessageService {
   ) {}
 
   public async get(currentUser: User, chatId: number): Promise<GetMessageOutput[]> {
-    const messages = await this.messageRepository.getByUserChat(currentUser.id, chatId);
+    const chat = await this.chatRepository.findById(chatId);
+
+    if (!this.chatService.hasUserWithId(chat, currentUser.id)) {
+      throw new ForbiddenException();
+    }
+
+    const messages = await this.messageRepository.getByChatId(chatId);
 
     return messages.sort((a, b) => a.id - b.id);
   }
