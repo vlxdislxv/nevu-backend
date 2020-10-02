@@ -1,37 +1,27 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { GetChatOutput } from './dto/get-chat.output';
 import { Chat } from './models/chat.entity';
 import { User } from '../user/models/user.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { unique } from '../common/helpers/funcs';
-import { SocketService } from '../socket/socket.service';
 import { UserService } from '../user/user.service';
+import { ChatRepository } from './chat.repository';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class ChatService {
   public constructor(
-    @InjectRepository(Chat)
-    private readonly chatRepository: Repository<Chat>,
+    private readonly chatRepository: ChatRepository,
     private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
   ) {}
 
-  public async getChats(uid: number): Promise<GetChatOutput[]> {
-    const chats = await this.chatRepository.createQueryBuilder('chat')
-      .select(['chat.id', 'chat.name'])
-      .leftJoin('chat.users', 'user')
-      .where('user.id = :uid', { uid })
-      .limit(15)
-      .getMany();
+  public async get(uid: number): Promise<GetChatOutput[]> {
+    const chats = await this.chatRepository.findByUserId(uid);
 
     const chatIds = [-1, ...chats.map(chat => chat.id)];
 
-    const chatsWithMembers = await this.chatRepository
-      .createQueryBuilder('chat')
-      .leftJoinAndSelect('chat.users', 'user')
-      .where('user.id != :uid and chat.id IN (:...chatIds)', { uid, chatIds })
-      .getMany();
+    const chatsWithMembers = await this.chatRepository.findByIdsWithOtherMembers(chatIds, uid);
 
     return chatsWithMembers.map(
       (chat) =>
@@ -50,7 +40,7 @@ export class ChatService {
       throw new BadRequestException('with[] is invalid');
     }
 
-    const users = await this.userService.findByIds(ids);
+    const users = await this.userRepository.findByIds(ids);
 
     if (users.length !== ids.length) {
       throw new BadRequestException('with[] is invalid');
@@ -64,14 +54,6 @@ export class ChatService {
     users.map(user => {chatName += `${user.fullName},`});
     chatName = chatName.substring(0, chatName.length - 1);
     return chatName;
-  }
-
-  public findById(chatId: number): Promise<Chat> {
-    return this.chatRepository
-    .createQueryBuilder('chat')
-    .leftJoinAndSelect('chat.users', 'user')
-    .where('chat.id = :chatId', { chatId })
-    .getOne();
   }
 
   public hasUserWithId(chat: Chat, userId: number): boolean {

@@ -7,6 +7,7 @@ import { Chat } from '../chat/models/chat.entity';
 import { User } from '../user/models/user.entity';
 import { SocketModule } from '../socket/socket.module';
 import { ChatModule } from '../chat/chat.module';
+import { MessageRepositoryProvider } from './message.repository';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ChatModule } from '../chat/chat.module';
     ChatModule,
     TypeOrmModule.forFeature([Message, Chat, User]),
   ],
-  providers: [MessageService, MessageResolver],
+  providers: [MessageService, MessageResolver, MessageRepositoryProvider],
+  exports: [MessageRepositoryProvider],
 })
 export class MessageModule {}

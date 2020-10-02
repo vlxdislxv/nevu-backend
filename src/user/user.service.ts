@@ -11,27 +11,25 @@ import { LoginOutput } from './dto/login.output';
 import { UserFindInput } from './dto/user-find.input';
 import { ProfileOutput } from './dto/profile.output';
 import { SocketService } from '../socket/socket.service';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   public constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly socketService: SocketService,
   ) {}
 
   public async register(input: RegisterInput): Promise<RegisterOutput> {
-    const user = await this.usersRepository.save({
-      ...input,
-      password: await HashHelper.bcrypt(input.password),
-    });
+    const user = await this.userRepository.save(this.userRepository.create(input));
+
     return { token: await this.jwtService.signAsync({ uid: user.id }) };
   }
 
   public async login(input: LoginInput): Promise<LoginOutput> {
     try {
-      const user = await this.usersRepository.findOneOrFail({
+      const user = await this.userRepository.findOneOrFail({
         ...input,
         password: await HashHelper.bcrypt(input.password),
       });
@@ -42,21 +40,7 @@ export class UserService {
   }
 
   public find(input: UserFindInput, currUser: User): Promise<ProfileOutput[]> {
-    return this.usersRepository
-      .createQueryBuilder('user')
-      .where('user.fullName LIKE :fullName and id != :uid', {
-        fullName: `%${input.search}%`,
-        uid: currUser.id,
-      })
-      .getMany();
-  }
-
-  public findById(id: number): Promise<User> {
-    return this.usersRepository.findOne({ id });
-  }
-
-  public findByIds(ids: number[]): Promise<User[]> {
-    return this.usersRepository.findByIds(ids);
+    return this.userRepository.search(input.search, currUser.id);
   }
 
   public isOnline(userId: number): boolean {

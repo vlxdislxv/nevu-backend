@@ -15,7 +15,7 @@ export class ChatResolver {
   @Query(() => [GetChatOutput])
   @UseGuards(AuthGuard)
   public getChat(@CurrentUser() user: User): Promise<GetChatOutput[]> {
-    return this.chatService.getChats(user.id);
+    return this.chatService.get(user.id);
   }
 
   @Mutation(() => GetChatOutput)

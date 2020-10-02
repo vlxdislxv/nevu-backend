@@ -1,5 +1,6 @@
 import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from '../../user/user.repository';
 import { UserService } from '../../user/user.service';
 
 export interface VerifyResp {
@@ -12,7 +13,7 @@ export interface VerifyResp {
 export class SocketAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private userService: UserService,
+    private userRepository: UserRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,7 +22,7 @@ export class SocketAuthGuard implements CanActivate {
     try {
       const payload: VerifyResp = this.jwtService.verify(request.token);
 
-      request.user = await this.userService.findById(payload.uid);
+      request.user = await this.userRepository.findById(payload.uid);
 
       return request.user;
     } catch {

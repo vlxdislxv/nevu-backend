@@ -18,7 +18,7 @@ export class MessageResolver {
     @CurrentUser() user: User,
     @Args('chatId') chatId: number,
   ): Promise<GetMessageOutput[]> {
-    return this.messageService.getMessages(user.id, chatId);
+    return this.messageService.get(user, chatId);
   }
 
   @Mutation(() => GetMessageOutput)
@@ -26,6 +26,6 @@ export class MessageResolver {
     @CurrentUser() user: User,
     @Args('message') createChatInput: CreateMessageInput,
   ): Promise<GetMessageOutput> {
-    return this.messageService.sendMessage(user, createChatInput);
+    return this.messageService.send(user, createChatInput);
   }
 }

@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './models/user.entity';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { SocketModule } from '../socket/socket.module';
+import { UserRepositoryProvider } from './user.repository';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { SocketModule } from '../socket/socket.module';
     TypeOrmModule.forFeature([User]),
     SocketModule,
   ],
-  providers: [UserService, UserResolver, JwtStrategy],
-  exports: [UserService, JwtModule, JwtStrategy]
+  providers: [UserService, UserResolver, JwtStrategy, UserRepositoryProvider],
+  exports: [UserService, JwtModule, JwtStrategy, UserRepositoryProvider],
 })
 export class UserModule {}
