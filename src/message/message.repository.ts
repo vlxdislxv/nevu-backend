@@ -7,7 +7,7 @@ export class MessageRepository extends Repository<Message> {
     return this.createQueryBuilder('message')
       .leftJoinAndSelect('message.from', 'from')
       .where('message.chat = :chatId', { chatId })
-      .limit(15)
+      .take(15)
       .orderBy('message.id', 'DESC')
       .getMany();
   }
