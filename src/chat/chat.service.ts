@@ -28,7 +28,7 @@ export class ChatService {
         new GetChatOutput(
           chat.id,
           chat.name,
-          !!chat.users.find((u) => this.userService.isOnline(u.id)),
+          chat.users.some((u) => this.userService.isOnline(u.id)),
         ),
     );
   }
