@@ -1,7 +1,6 @@
 import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../../user/user.repository';
-import { UserService } from '../../user/user.service';
 
 export interface VerifyResp {
   uid: number;

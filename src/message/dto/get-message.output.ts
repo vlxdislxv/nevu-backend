@@ -3,7 +3,6 @@ import { ProfileOutput } from '../../user/dto/profile.output';
 import { GetChatOutput } from '../../chat/dto/get-chat.output';
 import { User } from '../../user/models/user.entity';
 import { Chat } from '../../chat/models/chat.entity';
-import { SocketService } from '../../socket/socket.service';
 
 @ObjectType()
 export class GetMessageOutput {

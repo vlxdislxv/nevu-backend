@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, BeforeInsert } from 'typeorm';
 import { Chat } from '../../chat/models/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';
