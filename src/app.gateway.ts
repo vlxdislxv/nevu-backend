@@ -7,7 +7,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { SocketAuthGuard } from './common/guards/socket-auth.guard';
 import { UseGuards, OnModuleInit } from '@nestjs/common';
-import { User } from './user/models/user.entity';
+import { User } from './user/db/user.entity';
 import { SocketService } from './socket/socket.service';
 
 interface AuthWSResponse {

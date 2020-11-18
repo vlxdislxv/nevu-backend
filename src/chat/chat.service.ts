@@ -1,12 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { GetChatOutput } from './dto/get-chat.output';
-import { Chat } from './models/chat.entity';
-import { User } from '../user/models/user.entity';
+import { Chat } from './db/chat.entity';
+import { User } from '../user/db/user.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { unique } from '../common/helpers/funcs';
 import { UserService } from '../user/user.service';
-import { ChatRepository } from './chat.repository';
-import { UserRepository } from '../user/user.repository';
+import { ChatRepository } from './db/chat.repository';
+import { UserRepository } from '../user/db/user.repository';
 
 @Injectable()
 export class ChatService {

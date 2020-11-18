@@ -4,10 +4,10 @@ import { UserResolver } from './user.resolver';
 import { JwtModule } from '@nestjs/jwt';
 import { Env } from '../common/env';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './models/user.entity';
+import { User } from './db/user.entity';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { SocketModule } from '../socket/socket.module';
-import { UserRepositoryProvider } from './user.repository';
+import { UserRepositoryProvider } from './db/user.repository';
 
 @Module({
   imports: [

@@ -1,10 +1,10 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
-import { User } from '../user/models/user.entity';
+import { User } from '../user/db/user.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { GetMessageOutput } from './dto/get-message.output';
 import { SocketService } from '../socket/socket.service';
-import { MessageRepository } from './message.repository';
-import { ChatRepository } from '../chat/chat.repository';
+import { MessageRepository } from './db/message.repository';
+import { ChatRepository } from '../chat/db/chat.repository';
 import { ChatService } from '../chat/chat.service';
 
 @Injectable()

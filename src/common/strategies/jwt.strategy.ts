@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Env } from '../env';
 import { Repository } from 'typeorm';
-import { User } from '../../user/models/user.entity';
+import { User } from '../../user/db/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 interface DefaultPayload {

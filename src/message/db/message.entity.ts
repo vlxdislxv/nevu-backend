@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
-import { User } from '../../user/models/user.entity';
-import { Chat } from '../../chat/models/chat.entity';
+import { User } from '../../user/db/user.entity';
+import { Chat } from '../../chat/db/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';
 
 @Entity()

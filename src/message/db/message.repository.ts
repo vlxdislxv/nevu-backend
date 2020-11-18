@@ -1,5 +1,5 @@
 import { Connection, EntityRepository, Repository } from 'typeorm';
-import { Message } from './models/message.entity';
+import { Message } from './message.entity';
 
 @EntityRepository(Message)
 export class MessageRepository extends Repository<Message> {

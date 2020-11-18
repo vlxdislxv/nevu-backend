@@ -7,8 +7,8 @@ import {
   OneToMany,
   Column,
 } from 'typeorm';
-import { User } from '../../user/models/user.entity';
-import { Message } from '../../message/models/message.entity';
+import { User } from '../../user/db/user.entity';
+import { Message } from '../../message/db/message.entity';
 import { BaseEntity } from '../../common/base/base-entity';
 
 @Entity()

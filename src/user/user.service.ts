@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegisterOutput } from './dto/register.output';
 import { RegisterInput } from './dto/register.input';
-import { User } from './models/user.entity';
+import { User } from './db/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { HashHelper } from '../common/helpers/hash.helper';
 import { LoginInput } from './dto/login.input';
@@ -9,7 +9,7 @@ import { LoginOutput } from './dto/login.output';
 import { UserFindInput } from './dto/user-find.input';
 import { ProfileOutput } from './dto/profile.output';
 import { SocketService } from '../socket/socket.service';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './db/user.repository';
 
 @Injectable()
 export class UserService {

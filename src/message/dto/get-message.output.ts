@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ProfileOutput } from '../../user/dto/profile.output';
 import { GetChatOutput } from '../../chat/dto/get-chat.output';
-import { User } from '../../user/models/user.entity';
-import { Chat } from '../../chat/models/chat.entity';
+import { User } from '../../user/db/user.entity';
+import { Chat } from '../../chat/db/chat.entity';
 
 @ObjectType()
 export class GetMessageOutput {

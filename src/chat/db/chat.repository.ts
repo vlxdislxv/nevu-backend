@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Connection, EntityRepository, Repository } from 'typeorm';
-import { Chat } from './models/chat.entity';
+import { Chat } from './chat.entity';
 
 @EntityRepository(Chat)
 export class ChatRepository extends Repository<Chat> {

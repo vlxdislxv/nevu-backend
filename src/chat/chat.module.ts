@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Message } from '../message/models/message.entity';
+import { Message } from '../message/db/message.entity';
 import { ChatService } from './chat.service';
 import { ChatResolver } from './chat.resolver';
-import { Chat } from './models/chat.entity';
-import { User } from '../user/models/user.entity';
+import { Chat } from './db/chat.entity';
+import { User } from '../user/db/user.entity';
 import { UserModule } from '../user/user.module';
-import { ChatRepositoryProvider } from './chat.repository';
+import { ChatRepositoryProvider } from './db/chat.repository';
 
 @Module({
   imports: [
