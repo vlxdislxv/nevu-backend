@@ -15,6 +15,14 @@ export class UserRepository extends Repository<User> {
       })
       .getMany();
   }
+
+  public findByEmail(email: string): Promise<User | undefined> {
+    return this.findOne({ email });
+  }
+
+  public findByUsername(username: string): Promise<User | undefined> {
+    return this.findOne({ username });
+  }
 }
 
 export const UserRepositoryProvider = {
