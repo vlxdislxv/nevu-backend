@@ -7,6 +7,7 @@ import { unique } from '../common/helpers/funcs';
 import { UserService } from '../user/user.service';
 import { ChatRepository } from './db/chat.repository';
 import { UserRepository } from '../user/db/user.repository';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ChatService {
@@ -23,13 +24,11 @@ export class ChatService {
 
     const chatsWithMembers = await this.chatRepository.findByIdsWithOtherMembers(chatIds, uid);
 
-    return chatsWithMembers.map(
-      (chat) =>
-        new GetChatOutput(
-          chat.id,
-          chat.name,
-          chat.users.some((u) => this.userService.isOnline(u.id)),
-        ),
+    return chatsWithMembers.map((chat) =>
+      plainToClass(GetChatOutput, {
+        ...chat,
+        online: chat.users.some((u) => this.userService.isOnline(u.id)),
+      }),
     );
   }
 
