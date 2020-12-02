@@ -28,13 +28,15 @@ export class UserService {
   public async login(input: LoginInput): Promise<LoginOutput> {
     try {
       const user = await this.userRepository.findOneOrFail({
-        ...input,
-        password: await HashHelper.bcrypt(input.password),
+        username: input.username,
       });
-      return { token: await this.jwtService.signAsync({ uid: user.id }) };
-    } catch {
-      throw new UnauthorizedException();
-    }
+
+      if (user.password === (await HashHelper.bcrypt(input.password))) {
+        return { token: await this.jwtService.signAsync({ uid: user.id }) };
+      }
+    } catch {}
+
+    throw new UnauthorizedException();
   }
 
   public find(input: UserFindInput, currUser: User): Promise<ProfileOutput[]> {
