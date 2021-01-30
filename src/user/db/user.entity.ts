@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, BeforeInsert } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+  BeforeInsert,
+} from 'typeorm';
 import { Chat } from '../../chat/db/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';
 import { HashHelper } from '../../common/helpers/hash.helper';

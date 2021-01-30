@@ -25,10 +25,16 @@ export class ChatRepository extends Repository<Chat> {
       .getMany();
   }
 
-  public findByIdsWithOtherMembers(chatIds: number[], except: number): Promise<Chat[]> {
+  public findByIdsWithOtherMembers(
+    chatIds: number[],
+    except: number,
+  ): Promise<Chat[]> {
     return this.createQueryBuilder('chat')
       .leftJoinAndSelect('chat.users', 'user')
-      .where('user.id != :except and chat.id IN (:...chatIds)', { except, chatIds })
+      .where('user.id != :except and chat.id IN (:...chatIds)', {
+        except,
+        chatIds,
+      })
       .getMany();
   }
 }

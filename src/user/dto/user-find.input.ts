@@ -7,6 +7,6 @@ export class UserFindInput {
   @Field()
   @Length(1, 20)
   @IsString()
-  @Transform((v: string) => v.toLowerCase())
+  @Transform(({ value }) => value.toLowerCase())
   search: string;
 }

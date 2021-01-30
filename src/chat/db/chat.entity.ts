@@ -20,7 +20,7 @@ export class Chat extends BaseEntity<Chat> {
   @JoinTable({ name: 'user_chats_chat' })
   users: User[];
 
-  @OneToMany(() => Message, message => message.chat)
+  @OneToMany(() => Message, (message) => message.chat)
   @JoinColumn()
   messages: Message[];
 

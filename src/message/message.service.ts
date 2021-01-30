@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { User } from '../user/db/user.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { GetMessageOutput } from './dto/get-message.output';
@@ -16,7 +20,10 @@ export class MessageService {
     private readonly chatRepository: ChatRepository,
   ) {}
 
-  public async get(currentUser: User, chatId: number): Promise<GetMessageOutput[]> {
+  public async get(
+    currentUser: User,
+    chatId: number,
+  ): Promise<GetMessageOutput[]> {
     const chat = await this.chatRepository.findById(chatId);
 
     if (!this.chatService.hasUserWithId(chat, currentUser.id)) {
@@ -28,14 +35,21 @@ export class MessageService {
     return messages.sort((a, b) => a.id - b.id);
   }
 
-  public async send(from: User, input: CreateMessageInput): Promise<GetMessageOutput> {
+  public async send(
+    from: User,
+    input: CreateMessageInput,
+  ): Promise<GetMessageOutput> {
     const chat = await this.chatRepository.findById(input.chatId);
 
     if (!chat || !this.chatService.hasUserWithId(chat, from.id)) {
       throw new BadRequestException('chat not found');
     }
 
-    const message = await this.messageRepository.save({ from, chat, text: input.text });
+    const message = await this.messageRepository.save({
+      from,
+      chat,
+      text: input.text,
+    });
 
     const resp = new GetMessageOutput(message.id, message.text, from, chat);
 

@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { User } from '../../user/db/user.entity';
 import { Chat } from '../../chat/db/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';

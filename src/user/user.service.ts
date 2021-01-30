@@ -20,7 +20,9 @@ export class UserService {
   ) {}
 
   public async register(input: RegisterInput): Promise<RegisterOutput> {
-    const user = await this.userRepository.save(this.userRepository.create(input));
+    const user = await this.userRepository.save(
+      this.userRepository.create(input),
+    );
 
     return { token: await this.jwtService.signAsync({ uid: user.id }) };
   }
