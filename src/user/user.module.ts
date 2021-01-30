@@ -8,12 +8,10 @@ import { UserRepositoryProvider } from './db/user.repository';
 import { EmailUnique } from '../common/decorators/email-unique.decorator';
 import { UsernameUnique } from '../common/decorators/username-unique.decorator';
 import { ConfigService } from 'src/config/config.service';
-import { ConfigModule } from 'src/config/config.module';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
-      // imports: [ConfigModule],
       useFactory(configService: ConfigService) {
         return {
           secret: configService.get('JWT_SECRET'),
