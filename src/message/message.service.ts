@@ -61,7 +61,7 @@ export class MessageService {
   private push(users: User[], from: User, message: GetMessageOutput): void {
     users.map((user) => {
       if (user.id !== from.id)
-        this.socketService.server.to(`${user.id}`).emit('inc_msg', { message });
+        this.socketService.incomingMessage(`${user.id}`, message);
     });
   }
 }

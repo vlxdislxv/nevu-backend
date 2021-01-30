@@ -4,11 +4,9 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
-  BeforeInsert,
 } from 'typeorm';
 import { Chat } from '../../chat/db/chat.entity';
 import { BaseEntity } from '../../common/base/base-entity';
-import { HashHelper } from '../../common/helpers/hash.helper';
 
 @Entity()
 export class User extends BaseEntity<User> {
@@ -30,9 +28,4 @@ export class User extends BaseEntity<User> {
 
   @Column()
   fullName: string;
-
-  @BeforeInsert()
-  async beforeInsert(): Promise<void> {
-    this.password = await HashHelper.bcrypt(this.password);
-  }
 }

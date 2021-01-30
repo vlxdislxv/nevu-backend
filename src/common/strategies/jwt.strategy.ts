@@ -1,10 +1,10 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { Env } from '../env';
 import { Repository } from 'typeorm';
 import { User } from '../../user/db/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from 'src/config/config.service';
 
 interface DefaultPayload {
   uid?: number;
@@ -14,11 +14,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: Env.JWT_SECRET,
+      secretOrKey: configService.get('JWT_SECRET'),
     });
   }
 

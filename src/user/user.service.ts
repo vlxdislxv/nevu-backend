@@ -3,7 +3,7 @@ import { RegisterOutput } from './dto/register.output';
 import { RegisterInput } from './dto/register.input';
 import { User } from './db/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { HashHelper } from '../common/helpers/hash.helper';
+import { HashHelper } from '../common/module/helpers/hash.helper';
 import { LoginInput } from './dto/login.input';
 import { LoginOutput } from './dto/login.output';
 import { UserFindInput } from './dto/user-find.input';
@@ -17,11 +17,15 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly socketService: SocketService,
+    private readonly hashHelper: HashHelper,
   ) {}
 
   public async register(input: RegisterInput): Promise<RegisterOutput> {
     const user = await this.userRepository.save(
-      this.userRepository.create(input),
+      this.userRepository.create({
+        ...input,
+        password: await this.hashHelper.bcrypt(input.password),
+      }),
     );
 
     return { token: await this.jwtService.signAsync({ uid: user.id }) };
@@ -33,7 +37,7 @@ export class UserService {
         username: input.username,
       });
 
-      if (user.password === (await HashHelper.bcrypt(input.password))) {
+      if (user.password === (await this.hashHelper.bcrypt(input.password))) {
         return { token: await this.jwtService.signAsync({ uid: user.id }) };
       }
     } catch {}

@@ -2,22 +2,26 @@ import { UserService } from './user.service';
 import { Module } from '@nestjs/common';
 import { UserResolver } from './user.resolver';
 import { JwtModule } from '@nestjs/jwt';
-import { Env } from '../common/env';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './db/user.entity';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { SocketModule } from '../socket/socket.module';
 import { UserRepositoryProvider } from './db/user.repository';
 import { EmailUnique } from '../common/decorators/email-unique.decorator';
 import { UsernameUnique } from '../common/decorators/username-unique.decorator';
+import { ConfigService } from 'src/config/config.service';
+import { ConfigModule } from 'src/config/config.module';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: Env.JWT_SECRET,
-      signOptions: { expiresIn: Env.JWT_EXPIRES_IN },
+    JwtModule.registerAsync({
+      // imports: [ConfigModule],
+      useFactory(configService: ConfigService) {
+        return {
+          secret: configService.get('JWT_SECRET'),
+          signOptions: { expiresIn: configService.get('JWT_EXPIRES_IN') },
+        };
+      },
+      inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User]),
     SocketModule,
   ],
   providers: [

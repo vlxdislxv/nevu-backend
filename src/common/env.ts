@@ -1,4 +1,4 @@
-export class Env {
+export class Envf {
   static DB_HOST = 'localhost';
   static DB_PORT = 5432;
   static DB_USERNAME = 'postgres';
