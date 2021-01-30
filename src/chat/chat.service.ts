@@ -59,7 +59,7 @@ export class ChatService {
 
   private generateChatName(users: User[]): string {
     let chatName = '';
-    users.map((user) => {
+    users.forEach((user) => {
       chatName += `${user.fullName},`;
     });
     chatName = chatName.substring(0, chatName.length - 1);
