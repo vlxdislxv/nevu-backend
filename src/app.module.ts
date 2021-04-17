@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatModule } from './chat/chat.module';
+import { CommonModule } from './common/module/common.module';
+import { RedisModule } from './common/redis/redis.module';
+import { ConfigModule } from './config/config.module';
+import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
 import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
-import { ChatModule } from './chat/chat.module';
-import { ConfigModule } from './config/config.module';
-import { CommonModule } from './common/module/common.module';
-import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
 
 @Module({
   imports: [
     CommonModule,
+    RedisModule,
     ConfigModule.register({ folder: 'config' }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
@@ -19,7 +21,9 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
       autoSchemaFile: 'schema.gql',
       playground: true,
       debug: true,
-      context: ({ request }) => ({ request }),
+      installSubscriptionHandlers: true,
+      context: ({ req, connection }) =>
+        connection ? { req: connection.context } : { req },
     }),
     MessageModule,
     ChatModule,

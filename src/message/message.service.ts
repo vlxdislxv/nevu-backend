@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { User } from '../user/core/db/user.entity';
 import { CreateMessageInput } from './core/dto/create-message.input';
 import { GetMessageOutput } from './core/dto/get-message.output';
@@ -10,6 +11,7 @@ export class MessageService {
   public constructor(
     private readonly messageRepository: MessageRepository,
     private readonly chatService: ChatService,
+    private readonly pubSub: RedisPubSub,
   ) {}
 
   public async get(
@@ -48,6 +50,22 @@ export class MessageService {
     this.push(chat.users, from, resp);
 
     return resp;
+  }
+
+  async onModuleInit() {
+    setInterval(
+      (() => {
+        this.pubSub.publish('messageReceived', {
+          messageReceived: new GetMessageOutput(1, 'hi', {
+            id: 1,
+            username: '1',
+            fullName: '1',
+          } as any),
+          target: 1,
+        });
+      }).bind(this),
+      10000,
+    );
   }
 
   private push(users: User[], from: User, message: GetMessageOutput): void {
