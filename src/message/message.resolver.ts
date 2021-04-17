@@ -1,12 +1,12 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../common/guards/auth.guard';
-import { User } from '../user/db/user.entity';
-import { Message } from './db/message.entity';
+import { User } from '../user/core/db/user.entity';
+import { Message } from './core/db/message.entity';
 import { MessageService } from './message.service';
-import { GetMessageOutput } from './dto/get-message.output';
-import { CreateMessageInput } from './dto/create-message.input';
+import { GetMessageOutput } from './core/dto/get-message.output';
+import { CreateMessageInput } from './core/dto/create-message.input';
 
 @Resolver(() => Message)
 @UseGuards(AuthGuard)

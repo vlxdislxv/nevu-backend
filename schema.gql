@@ -8,17 +8,16 @@ type ProfileOutput {
   fullName: String!
 }
 
-type GetChatOutput {
-  id: Float!
-  name: String!
-  online: Boolean!
-}
-
 type GetMessageOutput {
   id: Float!
   text: String!
   from: ProfileOutput!
-  chat: GetChatOutput!
+}
+
+type GetChatOutput {
+  id: Float!
+  name: String!
+  online: Boolean!
 }
 
 type RegisterOutput {

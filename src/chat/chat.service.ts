@@ -1,20 +1,18 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { GetChatOutput } from './dto/get-chat.output';
-import { Chat } from './db/chat.entity';
-import { User } from '../user/db/user.entity';
-import { CreateChatInput } from './dto/create-chat.input';
+import { plainToClass } from 'class-transformer';
+import { GetChatOutput } from './core/dto/get-chat.output';
+import { User } from '../user/core/db/user.entity';
+import { CreateChatInput } from './core/dto/create-chat.input';
 import { unique } from '../common/helpers/funcs';
 import { UserService } from '../user/user.service';
-import { ChatRepository } from './db/chat.repository';
-import { UserRepository } from '../user/db/user.repository';
-import { plainToClass } from 'class-transformer';
+import { ChatRepository } from './core/db/chat.repository';
+import { Chat } from './core/db/chat.entity';
 
 @Injectable()
 export class ChatService {
   public constructor(
     private readonly chatRepository: ChatRepository,
     private readonly userService: UserService,
-    private readonly userRepository: UserRepository,
   ) {}
 
   public async get(uid: number): Promise<GetChatOutput[]> {
@@ -45,7 +43,7 @@ export class ChatService {
       throw new BadRequestException('with[] is invalid');
     }
 
-    const users = await this.userRepository.findByIds(ids);
+    const users = await this.userService.findByIds(ids);
 
     if (users.length !== ids.length) {
       throw new BadRequestException('with[] is invalid');
@@ -57,6 +55,10 @@ export class ChatService {
     });
   }
 
+  public findOfUser(chatId: number, userId: number): Promise<Chat> {
+    return this.chatRepository.findByIdAndUserId(chatId, userId);
+  }
+
   private generateChatName(users: User[]): string {
     let chatName = '';
     users.forEach((user) => {
@@ -64,9 +66,5 @@ export class ChatService {
     });
     chatName = chatName.substring(0, chatName.length - 1);
     return chatName;
-  }
-
-  public hasUserWithId(chat: Chat, userId: number): boolean {
-    return chat.users.some((u) => u.id === userId);
   }
 }

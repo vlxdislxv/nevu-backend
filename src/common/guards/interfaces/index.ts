@@ -1,4 +1,4 @@
-import { User } from 'src/user/db/user.entity';
+import { User } from 'src/user/core/db/user.entity';
 
 export interface VerifyResp {
   uid: number;

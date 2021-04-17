@@ -1,6 +1,6 @@
 import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from '../../user/db/user.repository';
+import { UserRepository } from '../../user/core/db/user.repository';
 import { VerifyResp } from './interfaces';
 
 @Injectable()

@@ -1,11 +1,9 @@
-import { MessageModule } from './message/message.module';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MessageModule } from './message/message.module';
+import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
-import { AppGateway } from './app.gateway';
-import { SocketModule } from './socket/socket.module';
 import { ConfigModule } from './config/config.module';
 import { CommonModule } from './common/module/common.module';
 import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
@@ -18,7 +16,7 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
       useClass: TypeOrmConfigService,
     }),
     GraphQLModule.forRoot({
-      autoSchemaFile: './src/schema.gql',
+      autoSchemaFile: 'schema.gql',
       playground: true,
       debug: true,
       context: ({ request }) => ({ request }),
@@ -26,8 +24,6 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
     MessageModule,
     ChatModule,
     UserModule,
-    SocketModule,
   ],
-  providers: [AppGateway],
 })
 export class AppModule {}

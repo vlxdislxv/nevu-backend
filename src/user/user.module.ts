@@ -1,16 +1,17 @@
-import { UserService } from './user.service';
 import { Module } from '@nestjs/common';
-import { UserResolver } from './user.resolver';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { UserService } from './user.service';
+import { UserResolver } from './user.resolver';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
-import { SocketModule } from '../socket/socket.module';
-import { UserRepositoryProvider } from './db/user.repository';
 import { EmailUnique } from '../common/decorators/email-unique.decorator';
 import { UsernameUnique } from '../common/decorators/username-unique.decorator';
-import { ConfigService } from 'src/config/config.service';
+import { UserRepository } from './core/db/user.repository';
+import { ConfigService } from '../config/config.service';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([UserRepository]),
     JwtModule.registerAsync({
       useFactory(configService: ConfigService) {
         return {
@@ -20,16 +21,14 @@ import { ConfigService } from 'src/config/config.service';
       },
       inject: [ConfigService],
     }),
-    SocketModule,
   ],
   providers: [
     UserService,
-    UserResolver,
     JwtStrategy,
-    UserRepositoryProvider,
-    UsernameUnique,
     EmailUnique,
+    UserResolver,
+    UsernameUnique,
   ],
-  exports: [UserService, JwtModule, JwtStrategy, UserRepositoryProvider],
+  exports: [UserService, JwtModule, JwtStrategy],
 })
 export class UserModule {}

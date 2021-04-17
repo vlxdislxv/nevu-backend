@@ -1,13 +1,12 @@
-import { MessageService } from './message.service';
 import { Module } from '@nestjs/common';
+import { MessageService } from './message.service';
 import { MessageResolver } from './message.resolver';
-import { SocketModule } from '../socket/socket.module';
 import { ChatModule } from '../chat/chat.module';
-import { MessageRepositoryProvider } from './db/message.repository';
+import { MessageRepository } from './core/db/message.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [SocketModule, ChatModule],
-  providers: [MessageService, MessageResolver, MessageRepositoryProvider],
-  exports: [MessageRepositoryProvider],
+  imports: [TypeOrmModule.forFeature([MessageRepository]), ChatModule],
+  providers: [MessageService, MessageResolver],
 })
 export class MessageModule {}

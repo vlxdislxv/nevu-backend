@@ -1,25 +1,24 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { ChatService } from './chat.service';
-import { User } from '../user/db/user.entity';
-import { GetChatOutput } from './dto/get-chat.output';
-import { CreateChatInput } from './dto/create-chat.input';
-import { Chat } from './db/chat.entity';
+import { User } from '../user/core/db/user.entity';
+import { GetChatOutput } from './core/dto/get-chat.output';
+import { CreateChatInput } from './core/dto/create-chat.input';
+import { Chat } from './core/db/chat.entity';
 
 @Resolver(() => Chat)
+@UseGuards(AuthGuard)
 export class ChatResolver {
   constructor(private chatService: ChatService) {}
 
   @Query(() => [GetChatOutput])
-  @UseGuards(AuthGuard)
   public getChat(@CurrentUser() user: User): Promise<GetChatOutput[]> {
     return this.chatService.get(user.id);
   }
 
   @Mutation(() => GetChatOutput)
-  @UseGuards(AuthGuard)
   public createChat(
     @CurrentUser() user: User,
     @Args('chat') createChatInput: CreateChatInput,

@@ -3,7 +3,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../../user/db/user.repository';
+import { UserRepository } from '../../user/core/db/user.repository';
 
 @ValidatorConstraint({ async: true })
 @Injectable()

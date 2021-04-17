@@ -1,22 +1,20 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RegisterOutput } from './dto/register.output';
-import { RegisterInput } from './dto/register.input';
-import { User } from './db/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { RegisterOutput } from './core/dto/register.output';
+import { RegisterInput } from './core/dto/register.input';
+import { User } from './core/db/user.entity';
 import { HashHelper } from '../common/module/helpers/hash.helper';
-import { LoginInput } from './dto/login.input';
-import { LoginOutput } from './dto/login.output';
-import { UserFindInput } from './dto/user-find.input';
-import { ProfileOutput } from './dto/profile.output';
-import { SocketService } from '../socket/socket.service';
-import { UserRepository } from './db/user.repository';
+import { LoginInput } from './core/dto/login.input';
+import { LoginOutput } from './core/dto/login.output';
+import { UserFindInput } from './core/dto/user-find.input';
+import { ProfileOutput } from './core/dto/profile.output';
+import { UserRepository } from './core/db/user.repository';
 
 @Injectable()
 export class UserService {
   public constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
-    private readonly socketService: SocketService,
     private readonly hashHelper: HashHelper,
   ) {}
 
@@ -49,7 +47,11 @@ export class UserService {
     return this.userRepository.search(input.search, currUser.id);
   }
 
+  public findByIds(ids: number[]): Promise<User[]> {
+    return this.userRepository.findByIds(ids);
+  }
+
   public isOnline(userId: number): boolean {
-    return this.socketService.clientAlive(userId.toString());
+    return true;
   }
 }

@@ -1,15 +1,15 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { User } from './db/user.entity';
-import { RegisterInput } from './dto/register.input';
-import { RegisterOutput } from './dto/register.output';
+import { User } from './core/db/user.entity';
+import { RegisterInput } from './core/dto/register.input';
+import { RegisterOutput } from './core/dto/register.output';
 import { UserService } from './user.service';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { ProfileOutput } from './dto/profile.output';
-import { UseGuards } from '@nestjs/common';
+import { ProfileOutput } from './core/dto/profile.output';
 import { AuthGuard } from '../common/guards/auth.guard';
-import { LoginOutput } from './dto/login.output';
-import { LoginInput } from './dto/login.input';
-import { UserFindInput } from './dto/user-find.input';
+import { LoginOutput } from './core/dto/login.output';
+import { LoginInput } from './core/dto/login.input';
+import { UserFindInput } from './core/dto/user-find.input';
 
 @Resolver(() => User)
 export class UserResolver {

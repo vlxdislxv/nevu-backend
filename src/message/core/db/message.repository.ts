@@ -1,4 +1,4 @@
-import { Connection, EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Message } from './message.entity';
 
 @EntityRepository(Message)
@@ -12,10 +12,3 @@ export class MessageRepository extends Repository<Message> {
       .getMany();
   }
 }
-
-export const MessageRepositoryProvider = {
-  provide: 'MessageRepository',
-  useFactory: (connection: Connection): MessageRepository =>
-    connection.getCustomRepository(MessageRepository),
-  inject: [Connection],
-};

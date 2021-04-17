@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { Connection, EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Chat } from './chat.entity';
 
 @EntityRepository(Chat)
@@ -25,6 +25,17 @@ export class ChatRepository extends Repository<Chat> {
       .getMany();
   }
 
+  public findByIdAndUserId(
+    id: number,
+    userId: number,
+  ): Promise<Chat | undefined> {
+    return this.createQueryBuilder('chat')
+      .leftJoin('chat.users', 'users')
+      .where({ id })
+      .andWhere('users.id = :userId', { userId })
+      .getOne();
+  }
+
   public findByIdsWithOtherMembers(
     chatIds: number[],
     except: number,
@@ -38,10 +49,3 @@ export class ChatRepository extends Repository<Chat> {
       .getMany();
   }
 }
-
-export const ChatRepositoryProvider = {
-  provide: 'ChatRepository',
-  useFactory: (connection: Connection): ChatRepository =>
-    connection.getCustomRepository(ChatRepository),
-  inject: [Connection],
-};

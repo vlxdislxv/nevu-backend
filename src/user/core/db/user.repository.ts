@@ -1,4 +1,4 @@
-import { Connection, EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { User } from './user.entity';
 
 @EntityRepository(User)
@@ -24,10 +24,3 @@ export class UserRepository extends Repository<User> {
     return this.findOne({ username });
   }
 }
-
-export const UserRepositoryProvider = {
-  provide: 'UserRepository',
-  useFactory: (connection: Connection): UserRepository =>
-    connection.getCustomRepository(UserRepository),
-  inject: [Connection],
-};
