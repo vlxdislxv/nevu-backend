@@ -1,3 +1,4 @@
 import { PubSubProvider } from './pub-sub.provider';
+import { RedisProvider } from './redis.provider';
 
-export default [PubSubProvider];
+export default [RedisProvider, PubSubProvider];

@@ -2,18 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ProfileOutput {
-  id: Float!
-  username: String!
-  fullName: String!
-}
-
-type GetMessageOutput {
-  id: Float!
-  text: String!
-  from: ProfileOutput!
-}
-
 type GetChatOutput {
   id: Float!
   name: String!
@@ -24,8 +12,20 @@ type RegisterOutput {
   token: String!
 }
 
+type ProfileOutput {
+  id: Float!
+  username: String!
+  fullName: String!
+}
+
 type LoginOutput {
   token: String!
+}
+
+type GetMessageOutput {
+  id: Float!
+  text: String!
+  from: ProfileOutput!
 }
 
 type Query {

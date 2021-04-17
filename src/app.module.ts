@@ -8,6 +8,8 @@ import { ConfigModule } from './config/config.module';
 import { TypeOrmConfigService } from './config/typeorm/typeorm-config.service';
 import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { GqlConfig } from './subscription/core/gql/gql-config';
 
 @Module({
   imports: [
@@ -17,17 +19,13 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
-      playground: true,
-      debug: true,
-      installSubscriptionHandlers: true,
-      context: ({ req, connection }) =>
-        connection ? { req: connection.context } : { req },
+    GraphQLModule.forRootAsync({
+      useClass: GqlConfig,
     }),
     MessageModule,
     ChatModule,
     UserModule,
+    SubscriptionModule,
   ],
 })
 export class AppModule {}

@@ -5,7 +5,7 @@ export function unique<T>(value: T, index: number, self: Array<T>): boolean {
 }
 
 export function getUidFromContext(ctx: ISubContext): number {
-  const uid: number = ctx?.req?.user?.id;
+  const uid: number = ctx?.req?.uid;
 
   if (!uid) {
     throw new Error('can not get uid');

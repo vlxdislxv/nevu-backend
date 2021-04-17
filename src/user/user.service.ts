@@ -9,6 +9,7 @@ import { LoginOutput } from './core/dto/login.output';
 import { UserFindInput } from './core/dto/user-find.input';
 import { ProfileOutput } from './core/dto/profile.output';
 import { UserRepository } from './core/db/user.repository';
+import { VerifyResp } from '../common/guards/interfaces';
 
 @Injectable()
 export class UserService {
@@ -51,7 +52,14 @@ export class UserService {
     return this.userRepository.findByIds(ids);
   }
 
-  public isOnline(userId: number): boolean {
-    return true;
+  public async fromToken(token: string): Promise<User> {
+    const { uid }: VerifyResp = await this.jwtService.verifyAsync(token);
+    const user = await this.userRepository.findById(uid);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
   }
 }

@@ -52,26 +52,13 @@ export class MessageService {
     return resp;
   }
 
-  async onModuleInit() {
-    setInterval(
-      (() => {
-        this.pubSub.publish('messageReceived', {
-          messageReceived: new GetMessageOutput(1, 'hi', {
-            id: 1,
-            username: '1',
-            fullName: '1',
-          } as any),
-          target: 1,
-        });
-      }).bind(this),
-      10000,
-    );
-  }
-
   private push(users: User[], from: User, message: GetMessageOutput): void {
     users.map((user) => {
       if (user.id !== from.id) {
-        console.log('notify', message);
+        this.pubSub.publish('messageReceived', {
+          messageReceived: message,
+          target: user.id,
+        });
       }
     });
   }

@@ -7,12 +7,14 @@ import { unique } from '../common/helpers/funcs';
 import { UserService } from '../user/user.service';
 import { ChatRepository } from './core/db/chat.repository';
 import { Chat } from './core/db/chat.entity';
+import { SubscriptionService } from '../subscription/subscription.service';
 
 @Injectable()
 export class ChatService {
   public constructor(
     private readonly chatRepository: ChatRepository,
     private readonly userService: UserService,
+    private readonly subService: SubscriptionService,
   ) {}
 
   public async get(uid: number): Promise<GetChatOutput[]> {
@@ -28,7 +30,7 @@ export class ChatService {
     return chatsWithMembers.map((chat) =>
       plainToClass(GetChatOutput, {
         ...chat,
-        online: chat.users.some((u) => this.userService.isOnline(u.id)),
+        online: chat.users.some((u) => this.subService.isOnline(u.id)),
       }),
     );
   }

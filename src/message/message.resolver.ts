@@ -13,13 +13,13 @@ import { IIncomming } from './core/interfaces/incomming.interface';
 import { ISubContext } from '../common/interfaces/sub-context.interface';
 
 @Resolver(() => Message)
-@UseGuards(AuthGuard)
 export class MessageResolver {
   constructor(
     private readonly messageService: MessageService,
     private readonly pubSub: RedisPubSub,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Query(() => [GetMessageOutput])
   public getMessage(
     @CurrentUser() user: User,
@@ -41,6 +41,7 @@ export class MessageResolver {
     return this.pubSub.asyncIterator('messageReceived');
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => GetMessageOutput)
   public addMessage(
     @CurrentUser() user: User,
