@@ -1,19 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Expose } from 'class-transformer';
 
 @ObjectType()
 export class Chat {
+  @Expose()
   @Field()
   id: number;
 
+  @Expose()
   @Field()
   name: string;
 
+  @Expose()
   @Field()
   online?: boolean;
-
-  constructor(_id: number, _name: string, _online?: boolean) {
-    this.id = _id;
-    this.name = _name;
-    this.online = _online;
-  }
 }

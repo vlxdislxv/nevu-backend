@@ -76,7 +76,7 @@ export class ChatService {
     const mChats: Chat[] = [];
 
     for (const chat of chats) {
-      const mChat = plainToClass(Chat, chat);
+      const mChat = plainToClass(Chat, chat, { excludeExtraneousValues: true });
       mChat.online = await this.hasOnline(
         chat.users.filter((user) => user.id !== uid),
       );
