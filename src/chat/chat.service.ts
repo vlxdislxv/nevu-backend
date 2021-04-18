@@ -27,12 +27,7 @@ export class ChatService {
       uid,
     );
 
-    return chatsWithMembers.map((chat) =>
-      plainToClass(Chat, {
-        ...chat,
-        online: chat.users.some((u) => this.subService.isOnline(u.id)),
-      }),
-    );
+    return this.prepare(chatsWithMembers, uid);
   }
 
   public async create(
@@ -75,6 +70,30 @@ export class ChatService {
     }
 
     return chat;
+  }
+
+  private async prepare(chats: ChatEntity[], uid: number): Promise<Chat[]> {
+    const mChats: Chat[] = [];
+
+    for (const chat of chats) {
+      const mChat = plainToClass(Chat, chat);
+      mChat.online = await this.hasOnline(
+        chat.users.filter((user) => user.id !== uid),
+      );
+      mChats.push(mChat);
+    }
+
+    return mChats;
+  }
+
+  private async hasOnline(users: User[]): Promise<boolean> {
+    for (const { id } of users) {
+      if (await this.subService.isOnline(id)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private generateChatName(users: User[]): string {
