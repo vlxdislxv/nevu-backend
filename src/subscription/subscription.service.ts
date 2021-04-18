@@ -40,9 +40,9 @@ export class SubscriptionService {
   }
 
   public isOnline(uid: number): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.redis.smembers(`uid:${uid}`, (err: Error, res: string[]) => {
-        if (err) throw err;
+        if (err) reject(err);
 
         resolve(res.length > 0);
       });
