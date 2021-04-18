@@ -3,9 +3,8 @@ import { Resolver, Query, Args, Mutation, Subscription } from '@nestjs/graphql';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { User } from '../user/core/db/user.entity';
-import { Message } from './core/db/message.entity';
 import { MessageService } from './message.service';
-import { GetMessageOutput } from './core/dto/get-message.output';
+import { Message } from './core/dto/message.output';
 import { CreateMessageInput } from './core/dto/create-message.input';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { getUidFromContext } from '../common/helpers/funcs';
@@ -20,15 +19,15 @@ export class MessageResolver {
   ) {}
 
   @UseGuards(AuthGuard)
-  @Query(() => [GetMessageOutput])
+  @Query(() => [Message])
   public getMessage(
     @CurrentUser() user: User,
     @Args('chatId') chatId: number,
-  ): Promise<GetMessageOutput[]> {
+  ): Promise<Message[]> {
     return this.messageService.get(user, chatId);
   }
 
-  @Subscription(() => GetMessageOutput, {
+  @Subscription(() => Message, {
     filter: (
       payload: IIncomming,
       variables: Record<string, never>,
@@ -42,11 +41,11 @@ export class MessageResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => GetMessageOutput)
+  @Mutation(() => Message)
   public addMessage(
     @CurrentUser() user: User,
     @Args('message') createChatInput: CreateMessageInput,
-  ): Promise<GetMessageOutput> {
+  ): Promise<Message> {
     return this.messageService.send(user, createChatInput);
   }
 }

@@ -1,8 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { User } from '../user/core/db/user.entity';
 import { CreateMessageInput } from './core/dto/create-message.input';
-import { GetMessageOutput } from './core/dto/get-message.output';
+import { Message } from './core/dto/message.output';
 import { MessageRepository } from './core/db/message.repository';
 import { ChatService } from '../chat/chat.service';
 
@@ -14,46 +14,30 @@ export class MessageService {
     private readonly pubSub: RedisPubSub,
   ) {}
 
-  public async get(
-    currentUser: User,
-    chatId: number,
-  ): Promise<GetMessageOutput[]> {
-    const chat = await this.chatService.findOfUser(chatId, currentUser.id);
-
-    if (!chat) {
-      throw new BadRequestException('chat not found');
-    }
+  public async get(currentUser: User, chatId: number): Promise<Message[]> {
+    await this.chatService.findOfUser(chatId, currentUser.id);
 
     const messages = await this.messageRepository.getByChatId(chatId);
 
     return messages.sort((a, b) => a.id - b.id);
   }
 
-  public async send(
-    from: User,
-    input: CreateMessageInput,
-  ): Promise<GetMessageOutput> {
-    const chat = await this.chatService.findOfUser(input.chatId, from.id);
-
-    if (!chat) {
-      throw new BadRequestException('chat not found');
-    }
-
+  public async send(from: User, input: CreateMessageInput): Promise<Message> {
+    const chat = await this.chatService.findOfUser(input.chatId, from.id, true);
     const message = await this.messageRepository.save({
       from,
       chat,
       text: input.text,
     });
-
-    const resp = new GetMessageOutput(message.id, message.text, from);
+    const resp = new Message(message.id, message.text, from, chat);
 
     this.push(chat.users, from, resp);
 
     return resp;
   }
 
-  private push(users: User[], from: User, message: GetMessageOutput): void {
-    users.map((user) => {
+  private push(users: User[], from: User, message: Message): void {
+    users.forEach((user) => {
       if (user.id !== from.id) {
         this.pubSub.publish('messageReceived', {
           messageReceived: message,

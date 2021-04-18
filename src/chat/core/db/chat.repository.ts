@@ -30,7 +30,7 @@ export class ChatRepository extends Repository<Chat> {
     userId: number,
   ): Promise<Chat | undefined> {
     return this.createQueryBuilder('chat')
-      .leftJoin('chat.users', 'users')
+      .leftJoinAndSelect('chat.users', 'users')
       .where({ id })
       .andWhere('users.id = :userId', { userId })
       .getOne();

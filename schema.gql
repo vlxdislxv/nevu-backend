@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type GetChatOutput {
+type Chat {
   id: Float!
   name: String!
   online: Boolean!
@@ -22,15 +22,16 @@ type LoginOutput {
   token: String!
 }
 
-type GetMessageOutput {
+type Message {
   id: Float!
   text: String!
   from: ProfileOutput!
+  chat: Chat!
 }
 
 type Query {
-  getMessage(chatId: Float!): [GetMessageOutput!]!
-  getChat: [GetChatOutput!]!
+  getMessage(chatId: Float!): [Message!]!
+  getChat: [Chat!]!
   profile: ProfileOutput!
   findUser(user: UserFindInput!): [ProfileOutput!]!
 }
@@ -40,8 +41,8 @@ input UserFindInput {
 }
 
 type Mutation {
-  addMessage(message: CreateMessageInput!): GetMessageOutput!
-  createChat(chat: CreateChatInput!): GetChatOutput!
+  addMessage(message: CreateMessageInput!): Message!
+  createChat(chat: CreateChatInput!): Chat!
   register(user: RegisterInput!): RegisterOutput!
   login(user: LoginInput!): LoginOutput!
 }
@@ -68,5 +69,5 @@ input LoginInput {
 }
 
 type Subscription {
-  messageReceived: GetMessageOutput!
+  messageReceived: Message!
 }

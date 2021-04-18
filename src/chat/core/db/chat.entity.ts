@@ -3,7 +3,6 @@ import {
   Column,
   OneToMany,
   ManyToMany,
-  JoinTable,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../../user/core/db/user.entity';
@@ -16,7 +15,6 @@ export class Chat extends BaseEntity<Chat> {
   id: number;
 
   @ManyToMany(() => User, (entity) => entity.chats, { cascade: true })
-  @JoinTable({ name: 'user_chats_chat' })
   users: User[];
 
   @OneToMany(() => Message, (message) => message.chat)

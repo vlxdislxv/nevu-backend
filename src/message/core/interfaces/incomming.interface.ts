@@ -1,6 +1,6 @@
-import { GetMessageOutput } from '../dto/get-message.output';
+import { Message } from '../dto/message.output';
 
 export interface IIncomming {
-  messageReceived: GetMessageOutput;
+  messageReceived: Message;
   target: number;
 }

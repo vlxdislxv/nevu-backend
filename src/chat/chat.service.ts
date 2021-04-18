@@ -1,12 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { GetChatOutput } from './core/dto/get-chat.output';
+import { Chat as ChatEntity } from './core/db/chat.entity';
+import { Chat } from './core/dto/chat.output';
 import { User } from '../user/core/db/user.entity';
 import { CreateChatInput } from './core/dto/create-chat.input';
 import { unique } from '../common/helpers/funcs';
 import { UserService } from '../user/user.service';
 import { ChatRepository } from './core/db/chat.repository';
-import { Chat } from './core/db/chat.entity';
 import { SubscriptionService } from '../subscription/subscription.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ChatService {
     private readonly subService: SubscriptionService,
   ) {}
 
-  public async get(uid: number): Promise<GetChatOutput[]> {
+  public async get(uid: number): Promise<Chat[]> {
     const chats = await this.chatRepository.findByUserId(uid);
 
     const chatIds = [-1, ...chats.map((chat) => chat.id)];
@@ -28,7 +28,7 @@ export class ChatService {
     );
 
     return chatsWithMembers.map((chat) =>
-      plainToClass(GetChatOutput, {
+      plainToClass(Chat, {
         ...chat,
         online: chat.users.some((u) => this.subService.isOnline(u.id)),
       }),
@@ -38,7 +38,7 @@ export class ChatService {
   public async create(
     currUser: User,
     createChat: CreateChatInput,
-  ): Promise<GetChatOutput> {
+  ): Promise<Chat> {
     const ids = [...createChat.with, currUser.id].filter(unique);
 
     if (ids.length <= 1) {
@@ -57,8 +57,24 @@ export class ChatService {
     });
   }
 
-  public findOfUser(chatId: number, userId: number): Promise<Chat> {
-    return this.chatRepository.findByIdAndUserId(chatId, userId);
+  public async findOfUser(
+    chatId: number,
+    userId: number,
+    withOthers = false,
+  ): Promise<ChatEntity> {
+    let chat: ChatEntity = null;
+
+    if (withOthers) {
+      chat = await this.chatRepository.findById(chatId);
+    } else {
+      chat = await this.chatRepository.findByIdAndUserId(chatId, userId);
+    }
+
+    if (!chat || !chat.users.some((user) => user.id === userId)) {
+      throw new BadRequestException('chat not found');
+    }
+
+    return chat;
   }
 
   private generateChatName(users: User[]): string {
